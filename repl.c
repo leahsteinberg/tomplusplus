@@ -81,7 +81,7 @@ the_tree = assign(tokens, ip);
 }
 
 char **tokenize(char* buffer){
-	char *tokens[20];
+	static char *tokens[20];
 	int i, last_op, token_i, j;
 	token_i = 0;
 	for (i=0, last_op = 0; i < strlen(buffer); i++){
@@ -119,7 +119,7 @@ char **tokenize(char* buffer){
 
 Treenode assign(char **buffer, int *ip){
 // Assign -> variable = Expression
-  new_treenode var_leaf;
+  Treenode var_leaf;
   var_leaf = leaf(buffer, *ip);
   (*ip)++;
   //if (buffer[i] == '='){
@@ -148,7 +148,6 @@ Treenode assign(char **buffer, int *ip){
 Treenode leaf(char **buffer, int ip){
   // leaf -> variable | number
   Treenode leafnode;
-   leafnode = new_treenode();
    leafnode.value = buffer[ip];
    char first_value_char = leafnode.value[0];
    switch (first_value_char){
