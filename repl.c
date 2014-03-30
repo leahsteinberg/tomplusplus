@@ -40,6 +40,8 @@ Treenode *expression(char **buffer);
 Treenode *phrase(char **buffer);
 Treenode *leaf(char **buffer);
 char** tokenize(char *);
+char * evaluate(char *left, char *nodeVal, char *right);
+char *traverse(Treenode *node);
 
 int main(){
 	get_input();
@@ -70,6 +72,8 @@ void parse(char *buffer) {
 	char **tokens = tokenize(trimmed_buffer);
 	Treenode* the_tree;
 	the_tree = assign(tokens);
+	char *treechar = traverse(the_tree);
+	printf("heres tree char: %s\n", treechar);
 	/* for (int i = 0; i < 200; i++) { */
 	/* 	free(tokens[i]); */
 	/* } */
@@ -224,7 +228,7 @@ Treenode *leaf(char **buffer){
 	if(buffer[buffer_index][0] == '('){
 		buffer_index++;
 		Treenode *exprNode = expression(buffer);
-		buffer_index++; 
+		buffer_index++;
 		if(buffer[buffer_index][0] == ')'){
 			//buffer_index++; // i think??
 			return exprNode;
@@ -248,3 +252,50 @@ Treenode *leaf(char **buffer){
 	leafnode->right = NULL;
 	return leafnode;
 }
+
+
+
+char* traverse(Treenode *node){
+	char *left, *right;
+	if (node->left != 0x0){
+		left = traverse(node->left);
+	}
+	if(node->right != 0x0){
+		right = traverse(node->right);
+	}
+	if(!strncmp(node->type, "op", 2)){
+		return evaluate(left, node->value, right);
+	}
+	else{
+		return node->value;
+	}
+	///printf("%s\n", node->value);
+}
+
+
+char *evaluate(char *left, char *nodeVal, char *right){
+	int returnVal;
+	char * returnChar;
+	switch(*nodeVal){
+		case '=':
+			returnVal = atoi(right);
+			//do mem stuff
+			break;
+		case '+':
+			returnVal = atoi(left) + atoi(right);
+			break;
+		case '-':
+			returnVal = atoi(left) - atoi(right);
+			break;
+		case '*':
+			returnVal = atoi(left) * atoi(right);
+			break;
+		case '/':
+			returnVal = atoi(left) / atoi(right);
+			break;
+	}
+	sprintf(returnChar, "%d", returnVal);
+	return returnChar;
+}
+
+
