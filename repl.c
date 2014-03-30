@@ -164,19 +164,26 @@ Treenode *expression(char **buffer){
 	phrasenode = phrase(buffer);
 	buffer_index++;
 	Treenode *plusminusNode;
-	if(!(strncmp(buffer[buffer_index], "+", 1)) || !strncmp(buffer[buffer_index], "-", 1)){
+	if(!(strncmp(buffer[buffer_index], "+", 1))|| !strncmp(buffer[buffer_index], "-", 1)){
+	while(!(strncmp(buffer[buffer_index], "+", 1)) || !strncmp(buffer[buffer_index], "-", 1)){
 		plusminusNode = new_treenode();
 		plusminusNode->type = "op";
 		plusminusNode->value = buffer[buffer_index];
 		plusminusNode->left = phrasenode;
+		buffer_index++;
+		Treenode *secondLeafNode = phrase(buffer);
+		plusminusNode->right = secondLeafNode;
+		phrasenode = plusminusNode;
+		buffer_index++;
+	}
 	}
 	else{
 		buffer_index--;
 		return phrasenode;
 	}
-	buffer_index++;
-	Treenode *exprNode = expression(buffer);
-	plusminusNode->right = exprNode;
+	buffer_index--;
+	/* Treenode *exprNode = expression(buffer); */
+	/* plusminusNode->right = exprNode; */
 	return plusminusNode;
 }
 
@@ -185,26 +192,29 @@ Treenode *expression(char **buffer){
 /* } */
 
 Treenode *phrase(char **buffer) {
-	/* Treenode *leafnode = leaf(buffer); */
-	/* buffer_index++; */
+	Treenode *leafnode = leaf(buffer);
+	buffer_index++;
 	Treenode *multdivNode;
 	if (!(strncmp(buffer[buffer_index], "*", 1)) || !strncmp(buffer[buffer_index], "/", 1)) {
-		multdivNode->value = buffer[buffer_index];
+	while (!(strncmp(buffer[buffer_index], "*", 1)) || !strncmp(buffer[buffer_index], "/", 1)) {
 		multdivNode = new_treenode();
+		multdivNode->value = buffer[buffer_index];
 		multdivNode->type = "op";
-		buffer_index--;
-		Treenode *phraseNode = phrase(buffer);
-		multiNode->left = phreaseNode;
+		buffer_index++;
+		Treenode *secondLeaf = leaf(buffer);
+		multdivNode->left = leafnode;
+		multdivNode->right = secondLeaf;
+		buffer_index++;
+		leafnode = multdivNode;
+		/* multiNode->left = phreaseNode; */
+	}
 	}
 	else{
 		buffer_index--;
 		return leafnode;
 	}
-	buffer_index++;
-	multdivNode->right = phraseNode;
-
-
-
+	buffer_index--;
+	/* multdivNode->right = phraseNode; */
 	return multdivNode;
 }
 
