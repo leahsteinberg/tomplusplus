@@ -61,7 +61,7 @@ void get_input(){
 
 void parse(char *buffer) {
 	// get rid of whitespace
-	// tokenize
+	// eokenize
 	int i, j;
 	char trimmed_buffer[MAXLINE];
 	for (i=0, j=0; i < strlen(buffer); i++) {
@@ -74,11 +74,12 @@ void parse(char *buffer) {
 	the_tree = assign(tokens);
 	char *treechar = traverse(the_tree);
 	printf("heres tree char: %s\n", treechar);
-	/* for (int i = 0; i < 200; i++) { */
-	/* 	free(tokens[i]); */
-	/* } */
-	/* free(tokens); */
-	/* buffer_index = 0; */
+	free(treechar);
+	for (int i = 0; i < 200; i++) {
+		free(tokens[i]);
+	}
+	free(tokens);
+	buffer_index = 0;
 }
 
 char **tokenize(char* buffer){
@@ -239,8 +240,7 @@ Treenode *leaf(char **buffer){
 	}
 	Treenode* leafnode = new_treenode();
 	leafnode->value = buffer[buffer_index];
-	char first_value_char = leafnode->value[0];
-	switch (first_value_char){
+	switch (leafnode->value[0]){
 		case 'a' ... 'z':
 			leafnode->type = "var";
 			break;
@@ -257,25 +257,26 @@ Treenode *leaf(char **buffer){
 
 char* traverse(Treenode *node){
 	char *left, *right;
-	if (node->left != 0x0){
-		left = traverse(node->left);
-	}
-	if(node->right != 0x0){
-		right = traverse(node->right);
-	}
-	if(!strncmp(node->type, "op", 2)){
-		return evaluate(left, node->value, right);
-	}
-	else{
+	if(node->left == 0x0 && node->right == 0x0){
 		return node->value;
 	}
-	///printf("%s\n", node->value);
+	left = traverse(node->left);
+	right = traverse(node->right);
+	char *value = evaluate(left, node->value, right);
+	return value;
+
 }
+	/* return node->value; */
+	/* } */
+	/* 	left = traverse(node->left); */
+	/* 	right = traverse(node->right); */
+	/* 	return evaluate(left, node->value, right); */
+	///printf("%s\n", node->value);
 
 
 char *evaluate(char *left, char *nodeVal, char *right){
 	int returnVal;
-	char * returnChar;
+	char *returnChar = malloc(10);
 	switch(*nodeVal){
 		case '=':
 			returnVal = atoi(right);
@@ -297,5 +298,7 @@ char *evaluate(char *left, char *nodeVal, char *right){
 	sprintf(returnChar, "%d", returnVal);
 	return returnChar;
 }
+
+
 
 
