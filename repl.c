@@ -3,16 +3,45 @@
 #include <stdlib.h>
 #include <ctype.h>
 #define MAXLINE 2000
+#define MEM_SIZE 8*1024
 
 #define BUFSIZE 10
+#define NUM_SYMBOLS 2
 int buffer_index = 0;
+void *heap_b;
+void *heap_e;
 typedef struct tnode *Treeptr;
+
+
 typedef struct tnode {
 	char *type;
 	char *value;
 	Treeptr left;
 	Treeptr right;
 } Treenode;
+
+typedef struct queueNode *Qptr;
+
+typedef struct queueNode
+{
+	char *type;
+	char *value;
+	Qptr next;
+	int *level;
+} QNode;
+
+typedef struct symbol *sym;
+
+typedef struct symbol
+{
+	char *type;
+	char *value;
+	int size;
+	int used;
+	void *pointer;
+} Symbols;
+
+sym symbol_table;
 
 Treenode* new_treenode();
 
@@ -43,8 +72,26 @@ char** tokenize(char *);
 char * evaluate(char *left, char *nodeVal, char *right);
 char *traverse(Treenode *node);
 
+void setup_mem();
+
 int main(){
+
+	setup_mem();
 	get_input();
+}
+
+void setup_mem(){
+	heap_b = (void *)malloc(MEM_SIZE);
+	heap_e = (heap_b + MEM_SIZE);
+	symbol_table = (sym) malloc(NUM_SYMBOLS*sizeof(Symbols));
+	/* for(int i = 0; i< NUM_SYMBOLS; i++){ */
+	/* 	symbol_table[i].type = NULL; */
+	/* 	symbol_table[i].value = "free"; */
+	/* 	symbol_table[i].size = MEM_SIZE/2; */
+	/* 	symbol_table[i].used = 0; */
+	/* 	symbol_table[i].pointer = heap_b+(i*(MEM_SIZE/NUM_SYMBOLS)); */
+
+	/* } */
 }
 
 
@@ -280,7 +327,6 @@ char *evaluate(char *left, char *nodeVal, char *right){
 	switch(*nodeVal){
 		case '=':
 			returnVal = atoi(right);
-			//do mem stuff
 			break;
 		case '+':
 			returnVal = atoi(left) + atoi(right);
@@ -300,5 +346,29 @@ char *evaluate(char *left, char *nodeVal, char *right){
 }
 
 
+/* void prettyPrint(Treenode *root) { */
+	
+
+
+/* } */
+
+/* QNode *make_q_Node(){ */
+/* 	QNode *this = malloc(sizeof(QNode)); */
+/* 	this->type = malloc(BUFSIZE); */
+/* 	this->value = malloc(BUFSIZE); */
+/* 	this->next = NULL; */
+/* 	this->level = malloc(sizeof(int)); */
+/* 	return this; */
+/* } */
+
+
+
+/* void enqueue(Treenode *node){ */
+/* 	Qptr newQueue = make_q_Node(); */
+/* 	newQueue->type = node->type; */
+/* 	newQueue->value = node->value; */
+
+
+/* } */
 
 
